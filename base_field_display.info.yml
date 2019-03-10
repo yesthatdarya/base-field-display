@@ -4,3 +4,4 @@ package: Administration
 type: module
 version: VERSION
 core: 8.x
+configure: base_field_display.settings
