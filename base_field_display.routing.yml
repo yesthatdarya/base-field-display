@@ -1,0 +1,7 @@
+base_field_display.settings:
+  path: '/admin/config/user-interface/base-field-display'
+  defaults:
+    _form: '\Drupal\base_field_display\Form\BaseFieldDisplaySettings'
+    _title: 'Base field display settings'
+  requirements:
+    _permission: 'administer display modes'

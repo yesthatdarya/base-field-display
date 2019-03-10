@@ -1,0 +1,5 @@
+base_field_display.settings:
+  title: Base field display settings
+  description: 'Expose fields for use on the manage display settings page.'
+  route_name: base_field_display.settings
+  parent: system.admin_config_ui

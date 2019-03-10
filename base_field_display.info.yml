@@ -1,0 +1,6 @@
+name: Base Field Display
+description: Adds title and other base fields to the manage display settings screen.
+package: Administration
+type: module
+version: VERSION
+core: 8.x
