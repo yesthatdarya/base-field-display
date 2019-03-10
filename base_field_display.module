@@ -13,27 +13,36 @@ function base_field_display_entity_base_field_info_alter(&$fields, EntityTypeInt
   if (!$entity_type instanceof ContentEntityType) {
     return;
   }
-  if ($exposed_fields = \Drupal::config('base_field_display.settings')->get($entity_type->id())) {
+  if ($exposed_fields = \Drupal::config('base_field_display.settings')
+    ->get($entity_type->id())) {
     /** @var \Drupal\Core\Field\BaseFieldDefinition $field */
     foreach ($fields as $field_name => $field) {
-      if ($exposed_fields[$field_name]) {
+      if (!empty($exposed_fields[$field_name])) {
         $field_type = $field->getType();
-        $display_options = [
-          'region' => 'hidden',
-        ];
-        switch ($field_type) {
-          case 'created':
-          case 'changed':
-            $display_options['type'] = 'timestamp';
-            break;
+        $display_options = $field->getDisplayOptions('view');
 
-          case 'entity_reference':
-            $display_options['type'] = $field->getSetting('target_type') === 'user' ? 'author' : 'label';
-            break;
+        // Set display type.
+        if (empty($display_options['type'])) {
+          switch ($field_type) {
+            case 'created':
+            case 'changed':
+              $display_options['type'] = 'timestamp';
+              break;
 
-          default:
-            break;
+            case 'entity_reference':
+              $display_options['type'] = $field->getSetting('target_type') === 'user' ? 'author' : 'label';
+              break;
+
+            default:
+              break;
+          }
         }
+
+        // Set default region.
+        if (empty($display_options['region'])) {
+          $display_options['region'] = 'hidden';
+        }
+
         $fields[$field_name]->setDisplayConfigurable('view', TRUE);
         $fields[$field_name]->setDisplayOptions('view', $display_options);
       }
@@ -62,7 +71,8 @@ function base_field_display_theme_registry_alter(&$theme_registry) {
  */
 function base_field_display_preprocess_node(&$variables) {
   // Replace fields unset by the node module preprocess hook.
-  if ($exposed_settings = \Drupal::config('base_field_display.settings')->get('node')) {
+  if ($exposed_settings = \Drupal::config('base_field_display.settings')
+    ->get('node')) {
     $exposed_fields = array_keys(array_filter($exposed_settings));
     $element = $variables['elements'];
     /** @var \Drupal\node\Entity\Node $node */
