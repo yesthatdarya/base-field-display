@@ -82,10 +82,12 @@ function base_field_display_preprocess_node(&$variables) {
     $display = \Drupal::service('entity_type.manager')
       ->getStorage('entity_view_display')
       ->load('node.' . $node->bundle() . '.' . $view_mode);
-    foreach ($exposed_fields as $field_name) {
-      $component = $display->getComponent($field_name);
-      $region = $component && !empty($component['region']) ? $component['region'] : 'content';
-      $variables[$region][$field_name] = $node->{$field_name}->view($view_mode);
+    if ($display) {
+      foreach ($exposed_fields as $field_name) {
+        $component = $display->getComponent($field_name);
+        $region = $component && !empty($component['region']) ? $component['region'] : 'content';
+        $variables[$region][$field_name] = $node->{$field_name}->view($view_mode);
+      }
     }
   }
 }
